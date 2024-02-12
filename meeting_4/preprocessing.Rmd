@@ -1,6 +1,7 @@
 ---
 title: "Text Processing / Feature Engeneering"
-author: "Petro Tolochko"
+professor: "Petro Tolochko"
+student: "Jeff Easterling"
 date: ""
 output:
   html_document
@@ -20,7 +21,7 @@ library(ggrepel)
 
 ```{r}
 getwd()
-setwd("~/Desktop/teaching/CEU_text_as_data/meeting_4/") # this is an example, paste your path here
+setwd("~/Projects/POLS5773/CEU_text_analysis")
 ```
 
 
@@ -28,7 +29,7 @@ Load the data:
 
 ```{r}
 
-federalist <- read_csv("../meeting_3/federalist.csv")
+federalist <- read_csv("./meeting_3/federalist.csv")
 
 ```
 
