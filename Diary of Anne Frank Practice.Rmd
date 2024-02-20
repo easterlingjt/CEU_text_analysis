@@ -1,0 +1,178 @@
+---
+title: "Diary of Anne Frank Project"
+author: "Jeffrey Easterling"
+date: "2024-02-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### The Diary of Anne Frank is a well-known work made readily available to the 
+### public. Apart from its popularity and reputation, a number of its other features
+### warrant examination: its relative brevity and iterative format lend it to within
+### text comparison between entries. Furthermore, this particular edition at least
+### third revision of the text. The original A written by Anne, the B edited by
+### her father, Otto, and this particular edition, C, by Mirjam Pressler who 
+### reintroduced and edited passages from A.
+
+### Set working environment
+
+```{r}
+getwd()
+setwd("~/Projects/POLS5773/CEU_text_analysis/coding_practice/diary_annefrank")
+```
+
+### Required Packages
+
+```{r, message=FALSE, results='hide'}
+library(tm)
+library(tidyverse)
+library(ggthemes)
+library(ggrepel)
+
+# others
+library(lubridate)
+```
+
+### Convert txt corpus into a .csv 
+
+```{r}
+text <- "pressler_diary.txt"
+
+# read in the doc's text line by line
+readLines(text)
+
+# examine the structure
+str(readLines(text))
+# we see this is a character vector with 11319 elements (or lines)
+
+# paste() has a useful argument, collapse, which breaks the boundaries between
+# elements, merging them into one!
+text <- paste(readLines(text), collapse= " ")
+
+text <- as.data.frame(text)
+
+#c <- as.data.frame(c)
+
+```
+
+INSERT PREPARATORY STEPS
+1. extract date from entries, and create a new row, date
+2. number each row with an index number, if not already done
+3. remember to create an exception for comments
+4. assume that any row that doesn't have a date is the same date as the row above
+
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+clean_c <- text %>% 
+  mutate(
+      text = str_to_lower(text),
+    # text = str_replace_all(text, "\n", " "), # replace '/n' carriage with " ". Probably unnecessary b/c of the past operation
+      text = str_remove_all(text, "[:punct:]"), # remove punctuation
+    ) %>% 
+  rowwise()
+```
+
+
+```{r}
+dtm_pressler <- DocumentTermMatrix(clean_c$text, 
+                                   control = list(removePunctuation = TRUE,
+                                   stopwords = FALSE))
+
+dtm_pressler <- dtm_pressler %>% as.matrix()
+
+dim(dtm_pressler)
+
+most_frequent <- dtm_pressler %>% colSums()
+
+most_frequent_df <- most_frequent %>% as.list() %>% as_tibble() %>%
+  pivot_longer(everything())
+
+most_frequent_df %>% arrange(desc(value))
+
+most_frequent_df %>% arrange(desc(value)) %>% print(n = 20)
+```
+
+
+
+```{r}
+most_frequent_df %>%
+  mutate(label = ifelse(value > 1200, name, NA)) %>%
+  ggplot() +
+  geom_point(aes(reorder(name, -value),  value)) +
+  geom_text_repel(aes(reorder(name, -value),  value, label = label),
+                  max.overlaps = 20) +
+  theme_tufte() +
+  ylab("Frequency") +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks = element_blank()
+  )
+```
+
+
+Zipf's Law (for many types of data studied in the physical and social sciences, the rank-frequency distribution is an inverse relation):
+
+```{r}
+most_frequent_df %>%
+  arrange(desc(value)) %>%
+  mutate(rank = 1:nrow(.)) %>%
+  ggplot(aes(rank, value)) +
+  geom_line() +
+  ylab("Frequency") +
+  xlab("Rank") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_tufte()
+
+```
+
+Similar results to the classroom Federalist Papers example. Let's remove stop words.
+
+
+```{r}
+dtm_pressler <- DocumentTermMatrix(clean_c$text, control = list(removePunctuation = TRUE, stopwords = stopwords("english")))
+                                   
+dtm_pressler <- dtm_pressler %>% as.matrix()
+
+dim(dtm_pressler)
+
+most_frequent <- dtm_pressler %>% colSums()
+
+most_frequent_df <- most_frequent %>% as.list() %>% as_tibble() %>%
+  pivot_longer(everything())
+
+most_frequent_df %>% arrange(desc(value))
+```
+
+Run the 
+
+```{r}
+most_frequent_df %>%
+  mutate(label = ifelse(value > 500, name, NA)) %>%
+  ggplot() +
+  geom_point(aes(reorder(name, -value),  value)) +
+  geom_text_repel(aes(reorder(name, -value),  value, label = label),
+                  max.overlaps = 20) +
+  theme_tufte() +
+  ylab("Frequency") +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+```
+
+

@@ -19,13 +19,20 @@ For our exercise, we work again with the English headlines (published in UK news
 Now, we load the data directly.
 
 ```{r}
+#Clear the workspace: 
+rm(list=ls()) 
+```
+
+
+```{r}
 require(tidyverse)
+setwd("/home/jeffrey/Projects/POLS5773/CEU_text_analysis/meeting_5")
 ```
 
 
 
 ```{r}
-articles_en <- read_csv("~/Desktop/Teaching/CEU_text_as_data/meeting_5/headlines.csv")
+articles_en <- read_csv("headlines.csv")
 ```
 
 
@@ -52,10 +59,10 @@ For clarity, we here work with two keyword sets: we collect the keywords related
 The keywords are written as regular expressions.
 
 ```{r}
-
 politicians <- c("tony blair", "gordon brown", "david cameron", "theresa may", "boris johnson", "prime minister")
-parties <- c("conservative party", "(?i)Tor(ies|y)","ukip","labour party", "liberal democrats", "scottish national party", "green party")
+parties <- c("conservative party", "(?i)Tor(ies|y)","ukip","(?i)Labour party", "labour", "liberal democrats", "scottish national party", "green party")
 
+#parties <- c("conservative party", "Tories","ukip","labour party", "labour", "liberal democrats", "scottish national party", "green party")
 ```
 
 Some questions:
@@ -68,6 +75,8 @@ What other keywords are relevant to measure the concept?
 All vector names (e.g.,"politicians") are then saved in another vector.
 
 ```{r}
+
+#parties <- toupper(parties)
 
 dict_name <- c("politicians", "parties") 
 
@@ -100,6 +109,8 @@ count_keywords <- function(text, keywords) {
   })
   return(keyword_counts)
 }
+
+#, 
 
 ```
 
@@ -228,7 +239,7 @@ library(googlesheets4)
 ```{r}
 
 # Authentication
-drive_auth(email ="petro.tolochko@gmail.com")
+drive_auth(email ="easterlingjt@gmail.com")
 gs4_auth(token = drive_token())
 drive_user()
 
