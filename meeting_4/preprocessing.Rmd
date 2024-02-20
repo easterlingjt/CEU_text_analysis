@@ -2,7 +2,7 @@
 title: "Text Processing / Feature Engeneering"
 professor: "Petro Tolochko"
 student: "Jeff Easterling"
-date: ""
+date: "Today"
 output:
   html_document
 ---
